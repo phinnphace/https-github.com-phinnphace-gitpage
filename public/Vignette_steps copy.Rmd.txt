@@ -1,0 +1,41 @@
+title: "Proportionality_Vignette" author: "PM" date: "r Sys.Date()" output: html_document
+knitr::opts_chunk$set(echo = TRUE)
+R Markdown
+Where proportionality enters
+
+##Step A — Association construction
+•	ZCTA ↔ ZIP relationships
+•	No weights
+•	No allocation
+•	Just structure
+
+##Step B — Association audit (neutral)
+•	How many rows?
+•	How many targets per source?
+•	Where does fan-out occur?
+
+measuring (precisely)
+
+Given a county-scoped ZCTA population baseline, what population total do we recover after:
+•	ZCTA → ZIP association
+•	ZIP → County allocation using HUD TOT_RATIO?
+
+This mirrors the real pipeline I have been observing:
+ZCTA data → ZIP proxy → County reporting.
+
+##Step C.1 — Build ZIP-level population using a minimal, explicit rule
+
+We need ZIP-level population only because HUD operates at ZIP.
+Rule (explicitly stated)
+
+Within a ZCTA, population is evenly attributed across associated ZIPs.
+This is not claimed as correct, only as necessary to proceed.
+***SECOND DECISION POINT***
+Because st_intersects() is doing a literal spatial test:
+•	If a ZCTA polygon touches Hennepin even a little, it counts.
+•	That includes edge-touching, slivers, water boundaries, and weird TIGER topology.
+•	The “relationship file” is not the same thing. It’s a curated linkage that reflects Census tabulation logic, not raw polygon contact.
+•	Input: VAR₀ at geography A
+•	Transformation: T₁ ∘ T₂ ∘ …
+•	Output: VAR₁ at geography A
+•	Result: Δx(VAR) = VAR₁ − VAR₀

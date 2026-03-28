@@ -1,0 +1,51 @@
+---
+title: "methodology_notes"
+author: "PM"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+https://www.nhgis.org/geographic-crosswalks#methodology
+## Crosswalk Provenance
+During development, we implemented the IPUMS NHGIS geographic interpolation crosswalk (nhgis_blk2010_tr2020_27) to evaluate perturbation under a block-based allocation framework. This crosswalk maps 2010 Census blocks (blk2010) to 2020 Census tracts (tr2020), with allocation weights (weight) derived from block-level interpolation. The variable parea records proportional areal overlap between source and target geometries used in the interpolation process.
+
+This artifact is preserved in the supplement to document the alternative allocation pathway tested during development and to support reproducibility of preliminary geoDeltaAudit comparisons.
+## IPUMS / NHGIS Interpolation Methodology
+IPUMS NHGIS recommends that geographic crosswalks be constructed from the lowest available census geography to minimize interpolation error when transforming summary data between boundary systems.
+
+As stated in the NHGIS documentation:
+
+“To transform summary data from one census’s geographic units to another’s, it’s important to start from the lowest possible level.”
+
+The appropriate source level depends on the census instrument used to collect the data:
+	•	Blocks for short-form decennial census data
+	•	Block group parts for long-form 1990–2000 census data
+	•	Block groups for ACS 5-year estimates
+	•	Census tracts only when lower geographic levels are unavailable
+
+Because the demonstration variable used in development testing is total population from the decennial census, the appropriate NHGIS pathway is a block-to-tract crosswalk. Accordingly, the crosswalk selected for testing was the Minnesota 2010 Census block → 2020 Census tract crosswalk (nhgis_blk2010_tr2020_27).
+## Data Integrity and Cleaning
+
+The IPUMS/NHGIS README accompanying this crosswalk describes the structure and intended use of the interpolation weights. Because crosswalk files frequently contain auxiliary fields and formatting that vary across software environments, light preprocessing was required to standardize the dataset for analysis.
+
+To maintain reproducibility and methodological transparency, both the original crosswalk and the cleaned analysis-ready version are preserved in this repository.
+
+## HUD ZIP–County Crosswalk Provenance
+The ZIP–County crosswalk used in the primary demonstration was obtained from the U.S. Department of Housing and Urban Development (HUD) USPS ZIP Code Crosswalk Files. These files are derived from the quarterly USPS Vacancy Data, which records the distribution of business and residential mailing addresses across ZIP codes. Because the USPS updates these data quarterly, the crosswalk reflects changes in ZIP code configurations over time.
+
+HUD crosswalks allocate observations using address-based ratios rather than geometric area or population counts. In this study, the TOT_RATIO field was used, representing the proportion of total addresses within a ZIP code associated with each county.
+
+HUD provides direction-specific crosswalk files; ZIP→County allocation files are distinct from County→ZIP files and cannot be used interchangeably. The ZIP→County crosswalk was selected here because it represents a widely used allocation framework in applied housing and population research and therefore provides a realistic baseline for evaluating allocation perturbation using the geoDeltaAudit framework.(Source: HUD Office of Policy Development and Research, HUD-USPS ZIP Code Crosswalk Files User Guide.)
+
+The HUD crosswalk allocates observations using address-based ratios derived from USPS address counts, reflecting an allocation assumption distinct from geographic interpolation approaches such as those used in NHGIS crosswalks.
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
